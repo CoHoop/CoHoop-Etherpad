@@ -17,7 +17,7 @@
                       "socket.io-client"    : "0.9.5",
                       "ueberDB"             : "0.1.7",
                       "async"               : "0.1.18",
-                      "express"             : "2.5.8",
+                      "express"             : "3.0.0",
                       "formidable"          : "1.0.9",
                       "log4js"              : "0.4.1",
                       "jsdom-nocontextifiy" : "0.2.10",
