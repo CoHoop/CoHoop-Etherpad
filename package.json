@@ -24,7 +24,7 @@
                       "mysql"               : "0.9.5",
                       "async-stacktrace"    : "0.0.2"
                      },
-  "engines"        : { "node" : ">=0.6.0",
+  "engines"        : { "node" : "0.6.0",
                        "npm"  : ">=1.0"
                      }, 
   "version"        : "1.0.0"
