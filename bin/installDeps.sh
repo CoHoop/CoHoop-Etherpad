@@ -20,19 +20,6 @@ hash node > /dev/null 2>&1 || {
   exit 1 
 }
 
-#Is npm installed?
-hash npm > /dev/null 2>&1 || { 
-  echo "Please install npm ( http://npmjs.org )" >&2
-  exit 1 
-}
-
-#check npm version
-NPM_VERSION=$(npm --version)
-if [ ! $(echo $NPM_VERSION | cut -d "." -f 1) = "1" ]; then
-  echo "You're running a wrong version of npm, you're using $NPM_VERSION, we need 1.x" >&2
-  exit 1 
-fi
-
 #check node version
 NODE_VERSION=$(node --version)
 if [ ! $(echo $NODE_VERSION | cut -d "." -f 1-2) = "v0.8" ]; then
