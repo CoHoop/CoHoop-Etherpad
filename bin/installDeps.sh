@@ -41,18 +41,6 @@ if [ ! -f $settings ]; then
   cp -v settings.json.template $settings || exit 1
 fi
 
-echo "Ensure that all dependencies are up to date..."
-(
-  mkdir -p node_modules
-  cd node_modules
-  [ -e ep_etherpad-lite ] || ln -s ../src ep_etherpad-lite
-  cd ep_etherpad-lite
-  npm install
-) || { 
-  rm -rf node_modules
-  exit 1 
-}
-
 echo "Ensure jQuery is downloaded and up to date..."
 DOWNLOAD_JQUERY="true"
 NEEDED_VERSION="1.7.1"
