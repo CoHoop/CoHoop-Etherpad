@@ -20,19 +20,6 @@ hash node > /dev/null 2>&1 || {
   exit 1 
 }
 
-#Is npm installed?
-hash npm > /dev/null 2>&1 || { 
-  echo "Please install npm ( http://npmjs.org )" >&2
-  exit 1 
-}
-
-#check npm version
-NPM_VERSION=$(npm --version)
-if [ ! $(echo $NPM_VERSION | cut -d "." -f 1) = "1" ]; then
-  echo "You're running a wrong version of npm, you're using $NPM_VERSION, we need 1.x" >&2
-  exit 1 
-fi
-
 #check node version
 NODE_VERSION=$(node --version)
 if [ ! $(echo $NODE_VERSION | cut -d "." -f 1-2) = "v0.6" ]; then
@@ -53,12 +40,6 @@ if [ ! -f $settings ]; then
   echo "Copy the settings template to $settings..."
   cp -v settings.json.template $settings || exit 1
 fi
-
-echo "Ensure that all dependencies are up to date..."
-npm install || { 
-  rm -rf node_modules
-  exit 1 
-}
 
 echo "Ensure jQuery is downloaded and up to date..."
 DOWNLOAD_JQUERY="true"
@@ -87,7 +68,7 @@ if [ -f "static/js/prefixfree.js" ]; then
 fi
 
 if [ $DOWNLOAD_PREFIXFREE = "true" ]; then
-  curl -lo static/js/prefixfree.js -k https://raw.github.com/LeaVerou/prefixfree/master/prefixfree.js || exit 1
+  curl -lo static/js/prefixfree.js -k https://raw.github.com/LeaVerou/prefixfree/gh-pages/prefixfree.js || exit 1
 fi
 
 #Remove all minified data to force node creating it new
