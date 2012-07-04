@@ -18,11 +18,11 @@
   // An Example of MySQL Configuration
    "dbType" : "mongodb",
    "dbSettings" : {
-                    "user" : "root",
-                    "host" : "127.0.0.1",
-                    "port" : 27017,
-                    "password": "",
-                    "dbname": "test"
+                    "user" : "cohoop",
+                    "host" : "ds035517.mongolab.com",
+                    "port" : 35517,
+                    "password": "C0h00pR0ck5",
+                    "dbname": "heroku_app5638817"
                   },
   
   //the default text of a pad
