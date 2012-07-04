@@ -1,30 +1,29 @@
-/*
-  This file must be valid JSON. But comments are allowed
-
-  Please edit settings.json, not settings.json.template
-*/
+/**
+   This file must be valid JSON. But comments are allowed
+   Please edit settings.json, not settings.json.template
+ */
 {
   //Ip and port which etherpad should bind at
-  "ip": "0.0.0.0",
+  "ip": "127.0.0.1",
   "port" : 9001,
   
   //The Type of the database. You can choose between dirty, sqlite and mysql
   //You should use mysql or sqlite for anything else than testing or development
-  "dbType" : "dirty",
+  //"dbType" : "dirty",
   //the database specific settings
-  "dbSettings" : {
-                   "filename" : "var/dirty.db"
-                 },
+  /*"dbSettings" : {
+                   "filename" : "var/mongo.db"
+                 },*/
                  
-  /* An Example of MySQL Configuration
-   "dbType" : "mysql",
+  // An Example of MySQL Configuration
+   "dbType" : "mongodb",
    "dbSettings" : {
-                    "user"    : "root", 
-                    "host"    : "localhost", 
-                    "password": "", 
-                    "database": "store"
+                    "user" : "root",
+                    "host" : "127.0.0.1",
+                    "port" : 27017,
+                    "password": "",
+                    "dbname": "test"
                   },
-  */
   
   //the default text of a pad
   "defaultPadText" : "Welcome to Etherpad Lite!\n\nThis pad text is synchronized as you type, so that everyone viewing this page sees the same text. This allows you to collaborate seamlessly on documents!\n\nEtherpad Lite on Github: http:\/\/j.mp/ep-lite\n",
@@ -56,18 +55,16 @@
 
   /* Users for basic authentication. is_admin = true gives access to /admin.
      If you do not uncomment this, /admin will not be available! */
-  /*
   "users": {
     "admin": {
-      "password": "changeme1",
+      "password": "root",
       "is_admin": true
     },
     "user": {
-      "password": "changeme1",
+      "password": "root",
       "is_admin": false
     }
   },
-  */
 
   /* The log level we are using, can be: DEBUG, INFO, WARN, ERROR */
   "loglevel": "INFO"

@@ -8,20 +8,21 @@ if [ -d "../bin" ]; then
   cd "../"
 fi
 
-#Stop the script if its started as root
-if [ "$(id -u)" -eq 0 ]; then
-   echo "You shouldn't start Etherpad-Lite as root!"
-   echo "Please type 'Etherpad Lite rocks my socks' if you still want to start it as root"
-   read rocks
-   if [ ! $rocks = "Etherpad Lite rocks my socks" ]
-   then
-     echo "Your input was incorrect"
-     exit 1
-   fi
-fi
+echo "Ensure that all dependencies are up to date..."
+(
+  mkdir -p node_modules
+  cd node_modules
+  [ -e ep_etherpad-lite ] || ln -s ../src ep_etherpad-lite
+  cd ep_etherpad-lite
+  npm install
+) || {
+  rm -rf node_modules
+  exit 1
+}
 
-#prepare the enviroment
-bin/installDeps.sh $* || exit 1
+cd "bin"
+cp -v "./mongodb_db.js" "../src/node_modules/ueberDB/mongodb_db.js"
+cd "../"
 
 #Move to the node folder and start
 echo "start..."
