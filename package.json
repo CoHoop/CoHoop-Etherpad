@@ -10,10 +10,33 @@
                         "name": "Robin Buse" }
                      ],
   "dependencies"   : {
+                      "yajsml"              : "1.1.3",
+                      "request"             : "2.9.100",
+                      "require-kernel"      : "1.0.5",
+                      "resolve"             : "0.2.1",
+                      "socket.io"           : "0.9.6",
+                      "ueberDB"             : "0.1.7",
+                      "async"               : "0.1.18",
+                      "express"             : "2.5.x",
+                      "connect"             : "1.8.7",
+                      "clean-css"           : "0.3.2",
+                      "uglify-js"           : "1.2.5",
+                      "formidable"          : "1.0.9",
+                      "log4js"              : "0.4.1",
+                      "jsdom-nocontextifiy" : "0.2.10",
                       "npm"                 : "1.1.24",
+                      "ejs"                 : "0.6.1",
+                      "graceful-fs"         : "1.1.5",
+                      "slide"               : "1.1.3",
+                      "semver"              : "1.0.13",
+                      "underscore"          : "1.3.1",
                       "mongodb"             : "x"
                      },
-  "bin":             { "etherpad-lite": "./node/server.js" },
+  "bin":             { "etherpad-lite": "./src/node/server.js" },
+  "devDependencies": {
+                      "jshint"  : "*",
+                      "async-stacktrace"    : "0.0.2"
+                     },
   "engines"        : { "node" : ">=0.8.0",
                        "npm"  : ">=1.0"
                      }, 
