@@ -27,4 +27,4 @@ cd "../"
 
 #Move to the node folder and start
 echo "start..."
-node node_modules/ep_etherpad-lite/node/server.js $*
+node src/node/server.js
