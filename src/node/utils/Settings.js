@@ -36,7 +36,8 @@ exports.ip = "0.0.0.0";
 /**
  * The Port ep-lite should listen to
  */
-exports.port = process.env.PORT || 9001;
+exports.port = process.env.PORT;
+
 
 /**
  * The Type of the database
