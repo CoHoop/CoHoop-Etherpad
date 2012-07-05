@@ -1,1 +1,1 @@
-web: bin/run.sh
+web: node_modules/ep_etherpad-lite/node/server.js
