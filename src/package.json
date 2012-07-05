@@ -19,6 +19,7 @@
                       "async"               : "0.1.18",
                       "express"             : "2.5.x",
                       "connect"             : "2.3.7",
+                      "async-stacktrace"    : "0.0.2",
                       "clean-css"           : "0.3.2",
                       "uglify-js"           : "1.2.5",
                       "formidable"          : "1.0.9",
@@ -33,8 +34,7 @@
                      },
   "bin":             { "etherpad-lite": "./node_module/ep_etherpad-lite/node/server.js" },
   "devDependencies": {
-                      "jshint"  : "*",
-                      "async-stacktrace"    : "0.0.2"
+                      "jshint"  : "*"
                      },
   "engines"        : { "node" : ">=0.8.0",
                        "npm"  : ">=1.0"
