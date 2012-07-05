@@ -36,7 +36,7 @@ exports.ip = "0.0.0.0";
 /**
  * The Port ep-lite should listen to
  */
-exports.port = process.env.PORT;
+exports.port = process.env.PORT | 9001;
 
 
 /**
