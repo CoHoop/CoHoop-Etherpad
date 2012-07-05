@@ -32,19 +32,39 @@ exports.root = path.normalize(path.join(npm.dir, ".."));
  * The IP ep-lite should listen to
  */
 exports.ip = "0.0.0.0";
-  
+
 /**
  * The Port ep-lite should listen to
  */
-exports.port = 9001;
+exports.port = process.env.PORT || 9001;
+
+/**
+ * The Type of the database
+ */
+//exports.dbType = "mongodb";
+
+/**
+ * This setting is passed with dbType to ueberDB to set up the database
+ */
+/*exports.dbSettings = {
+                        "user" : "cohoop",
+                        "host" : "ds035517.mongolab.com",
+                        "port" : 35517,
+                        "password": "C0h00pR0ck5",
+                        "dbname": "heroku_app5638817"
+                      };*/
+
+
 /*
  * The Type of the database
  */
 exports.dbType = "dirty";
+
 /**
  * This setting is passed with dbType to ueberDB to set up the database
  */
 exports.dbSettings = { "filename" : path.join(exports.root, "dirty.db") };
+
 /**
  * The default Text of a new pad
  */
@@ -106,7 +126,7 @@ if (settingsFilename.charAt(0) != '/') {
     settingsFilename = path.normalize(path.join(root, settingsFilename));
 }
 
-var settingsStr
+var settingsStr;
 try{
   //read the settings sync
   settingsStr = fs.readFileSync(settingsFilename).toString();
@@ -114,7 +134,7 @@ try{
   console.warn('No settings file found. Using defaults.');
   settingsStr = '{}';
 }
-  
+
 //remove all comments
 settingsStr = settingsStr.replace(/\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+/gm,"").replace(/#.*/g,"").replace(/\/\/.*/g,"");
 
