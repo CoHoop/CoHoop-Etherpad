@@ -9,9 +9,9 @@
   
   "dbType" : "dirty",
   //the database specific settings
-  "dbSettings" : {
+  "dbSettings" :  {
                    "filename" : "var/dirty.db"
-                 },
+                  },
 
   // The Type of the database. You can choose between dirty, sqlite and mysql
   // An Example of MySQL Configuration
@@ -48,10 +48,10 @@
   /* This setting is used if you require authentication of all users.
      Note: /admin always requires authentication. */
   "requireAuthentication": false,
-
+  
   /* Require authorization by a module, or a user with is_admin set, see below. */
   "requireAuthorization": false,
-
+  
   /* Users for basic authentication. is_admin = true gives access to /admin.
      If you do not uncomment this, /admin will not be available! */
   "users": {
