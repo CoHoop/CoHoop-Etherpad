@@ -5,7 +5,7 @@
 {
   //Ip and port which etherpad should bind at
   "ip": "0.0.0.0",
-  "port" : 9001,
+  //"port" : 9001,
   
   "dbType" : "dirty",
   //the database specific settings
