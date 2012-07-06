@@ -39,21 +39,35 @@ exports.ip = "0.0.0.0";
 exports.port = process.env.PORT;
 
 
+/*
+* The Type of the database
+*/
+exports.dbType = "mysql";
+/**
+* This setting is passed with dbType to ueberDB to set up the database
+*/
+exports.dbSettings = {
+                      "user" : url.parse(process.env.CLEARDB_DATABASE_URL).auth.split(':')[0],
+                      "password": url.parse(process.env.CLEARDB_DATABASE_URL).auth.split(':')[1],
+                      "host" : url.parse(process.env.CLEARDB_DATABASE_URL).hostname,
+                      "database": url.parse(process.env.CLEARDB_DATABASE_URL).pathname.replace(/^\//, '')
+                     };
+
 /**
  * The Type of the database
  */
-exports.dbType = "mongodb";
+//exports.dbType = "mongodb";
 
 /**
  * This setting is passed with dbType to ueberDB to set up the database
  */
-exports.dbSettings = {
+/*exports.dbSettings = {
                         "user" : "cohoop",
                         "host" : "ds035517.mongolab.com",
                         "port" : 35517,
                         "password": "C0h00pR0ck5",
                         "dbname": "heroku_app5638817"
-                      };
+                      };*/
 
 
 /*
