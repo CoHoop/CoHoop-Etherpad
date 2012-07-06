@@ -1,2 +1,2 @@
-web: node node_modules/ep_etherpad-lite/node/server.js
+web: build/runHeroku.sh
 worker: rm -f var/minified*
