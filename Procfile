@@ -1,2 +1,2 @@
-web: build/runHeroku.sh
+web: sh build/runHeroku.sh
 worker: rm -f var/minified*
