@@ -24,6 +24,7 @@ var os = require("os");
 var path = require('path');
 var argv = require('./Cli').argv;
 var npm = require("npm/lib/npm.js");
+var url = require("url");
 
 /* Root path of the installation */
 exports.root = path.normalize(path.join(npm.dir, ".."));
