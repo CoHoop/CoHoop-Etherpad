@@ -42,18 +42,18 @@ exports.port = process.env.PORT;
 /**
  * The Type of the database
  */
-//exports.dbType = "mongodb";
+exports.dbType = "mongodb";
 
 /**
  * This setting is passed with dbType to ueberDB to set up the database
  */
-/*exports.dbSettings = {
+exports.dbSettings = {
                         "user" : "cohoop",
                         "host" : "ds035517.mongolab.com",
                         "port" : 35517,
                         "password": "C0h00pR0ck5",
                         "dbname": "heroku_app5638817"
-                      };*/
+                      };
 
 
 /*
