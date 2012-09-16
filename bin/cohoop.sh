@@ -20,8 +20,22 @@ if [ "$(id -u)" -eq 0 ]; then
    fi
 fi
 
-#prepare the enviroment
+#Install Etherpad settings files for CoHoop environment
+echo "Install CoHoop Settings"
+[ -f "./settings.json" ] || cp "./bin/settings.json" "./settings.json"
+cp "./bin/src/package.json" "./src/package.json"
+
+#Install Cohoop theme
+echo "Install CoHoop theme"
+[ -f "./src/static/custom/pad.css" ] || cp "./bin/src/custom/pad.css" "./src/static/custom/pad.css"
+
+#prepare the environment
+echo "Install Etherpad dependence"
 bin/installDeps.sh $* || exit 1
+
+#import mongodb on ueberDB
+echo "Install mongodb dependence"
+[ -f "./src/node_modules/ueberDB/mongodb_db.js" ] || cp "./bin/mongodb_db.js" "./src/node_modules/ueberDB/mongodb_db.js"
 
 #Move to the node folder and start
 echo "start..."
