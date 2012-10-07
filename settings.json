@@ -37,10 +37,10 @@
   "defaultPadText" : "Welcome on CoHoop Community",
  
   /* Users must have a session to access pads. This effectively allows only group pads to be accessed. */
-  "requireSession" : false,
+  "requireSession" : true,
 
   /* Users may edit pads but not create new ones. Pad creation is only via the API. This applies both to group pads and regular pads. */
-  "editOnly" : false,
+  "editOnly" : true,
  
   /* if true, all css & js will be minified before sending to the client. This will improve the loading performance massivly,
      but makes it impossible to debug the javascript/css */
