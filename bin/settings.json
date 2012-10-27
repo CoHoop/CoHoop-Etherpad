@@ -34,7 +34,7 @@
                   },*/
  
   //the default text of a pad
-  "defaultPadText" : "Welcome on CoHoop Community",
+  "defaultPadText" : "Welcome to your hoop!",
  
   /* Users must have a session to access pads. This effectively allows only group pads to be accessed. */
   "requireSession" : false,

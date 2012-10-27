@@ -4,7 +4,7 @@
 <!doctype html>
 <html>
 
-        <title>Etherpad Lite</title>
+        <title>Hoop</title>
 
         <meta charset="utf-8">
         <meta name="robots" content="noindex, nofollow">
@@ -87,7 +87,7 @@
             <ul class="menu_right">
                 <% e.begin_block("editbarMenuRight"); %>
                 <li class="acl-write" data-key="settings">
-                    <a class="grouped-left" id="settingslink" title="Settings of this pad">
+                    <a class="grouped-left" id="settingslink" title="Settings of this hoop">
                         <span class="buttonicon buttonicon-settings"></span>
                     </a>
                 </li>
@@ -109,7 +109,7 @@
                 </li>
                 <li class="separator"></li>
                 <li onClick="document.location = document.location.pathname+ '/timeslider'">
-                    <a id="timesliderlink" title="Show the history of this pad">
+                    <a id="timesliderlink" title="Show the history of this hoop">
                         <span class="buttonicon buttonicon-history"></span>
                     </a>
                 </li>
@@ -152,7 +152,7 @@
         </div>
 
         <div id="settings" class="popup">
-            <h1>Pad settings</h1>
+            <h1>Hoop settings</h1>
             <div class="column">
                 <% e.begin_block("mySettings"); %>
                 <h2>My view</h2>
@@ -208,7 +208,7 @@
                 <% e.end_block(); %>
             </div>
             <div class="column">
-                <h2>Export current pad as</h2>
+                <h2>Export current hoop as</h2>
                 <% e.begin_block("exportColumn"); %>
                 <a id="exporthtmla" target="_blank" class="exportlink"><div class="exporttype" id="exporthtml">HTML</div></a>
                 <a id="exportplaina" target="_blank" class="exportlink"><div class="exporttype" id="exportplain">Plain text</div></a>
@@ -226,7 +226,7 @@
                 <input type="checkbox" id="readonlyinput" onClick="padeditbar.setEmbedLinks();">
                 <label for="readonlyinput">Read only</label>
             </div>
-            <h1>Share this pad</h1>
+            <h1>Share this hoop</h1>
             <div id="linkcode">
                 <h2>Link</h2>
                 <input id="linkinput" type="text" value="">
@@ -241,7 +241,7 @@
 
         <div id="chatthrob"></div>
 
-        <div id="chaticon" title="Open the chat for this pad" onclick="chat.show();return false;">
+        <div id="chaticon" title="Open the chat for this hoop" onclick="chat.show();return false;">
             <span id="chatlabel">Chat</span>
             <span class="buttonicon buttonicon-chat"></span>
             <span id="chatcounter">0</span>
@@ -274,25 +274,25 @@
                         <h2 class="h2_userdup">Opened in another window.</h2>
                         <h2 class="h2_unauth">No Authorization.</h2>
                         <div id="disconnected_looping">
-                            <p><b>We're having trouble talking to the EtherPad lite synchronization server.</b> You may be connecting through an incompatible firewall or proxy server.</p>
+                            <p><b>We're having trouble talking to the CoHoop synchronization server.</b> You may be connecting through an incompatible firewall or proxy server.</p>
                         </div>
                         <div id="disconnected_initsocketfail">
-                            <p><b>We were unable to connect to the EtherPad lite synchronization server.</b> This may be due to an incompatibility with your web browser or internet connection.</p>
+                            <p><b>We were unable to connect to the CoHoop synchronization server.</b> This may be due to an incompatibility with your web browser or internet connection.</p>
                         </div>
                         <div id="disconnected_userdup">
-                            <p><b>You seem to have opened this pad in another browser window.</b> If you'd like to use this window instead, you can reconnect.</p>
+                            <p><b>You seem to have opened this hoop in another browser window.</b> If you'd like to use this window instead, you can reconnect.</p>
                         </div>
                         <div id="disconnected_unknown">
-                            <p><b>Lost connection with the EtherPad lite synchronization server.</b> This may be due to a loss of network connectivity.</p>
+                            <p><b>Lost connection with the CoHoop synchronization server.</b> This may be due to a loss of network connectivity.</p>
                         </div>
                         <div id="disconnected_slowcommit">
                             <p><b>Server not responding.</b> This may be due to network connectivity issues or high load on the server.</p>
                         </div>
                         <div id="disconnected_unauth">
-                            <p>Your browser's credentials or permissions have changed while viewing this pad. Try reconnecting.</p>
+                            <p>Your browser's credentials or permissions have changed while viewing this hoop. Try reconnecting.</p>
                         </div>
                         <div id="disconnected_deleted">
-                            <p>This pad was deleted.</p>
+                            <p>This hoop was deleted.</p>
                         </div>
                         <div id="reconnect_advise">
                             <p>If this continues to happen, please let us know</p>
