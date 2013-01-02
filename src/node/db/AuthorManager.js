@@ -141,6 +141,8 @@ exports.getAuthor = function (author, callback)
   db.get("globalAuthor:" + author, callback);
 }
 
+
+
 /**
  * Returns the color Id of the author
  * @param {String} author The id of the author

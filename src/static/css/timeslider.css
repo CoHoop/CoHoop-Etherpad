@@ -59,7 +59,7 @@
   cursor: pointer;
   height: 35px;
   margin-left: 5px;
-  margin-right: 148px;
+  margin-right: 150px;
   position: relative;
   top: 20px;
 }
@@ -113,7 +113,7 @@
   background-position: -29px -22px;
   right: 5px;
   top: 20px;
-  width: 29px;
+  width: 30px;
 }
 #timeslider .star {
   background-image: url(../../static/img/star.png);
@@ -149,6 +149,13 @@
   line-height: 29px;
   margin-top: 0;
   padding-right: 6px;
+}
+#settings,
+#importexport,
+#embed,
+#connectivity,
+#users {
+    top: 62px;
 }
 #importexport .popup {
   width: 185px

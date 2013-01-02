@@ -43,6 +43,7 @@ var padmodals = require('./pad_modals').padmodals;
 var padsavedrevs = require('./pad_savedrevs');
 var paduserlist = require('./pad_userlist').paduserlist;
 var padutils = require('./pad_utils').padutils;
+var colorutils = require('./colorutils').colorutils;
 
 var createCookie = require('./pad_utils').createCookie;
 var readCookie = require('./pad_utils').readCookie;
@@ -50,20 +51,28 @@ var randomString = require('./pad_utils').randomString;
 
 var hooks = require('./pluginfw/hooks');
 
-function createCookie(name, value, days, path)
-{
+function createCookie(name, value, days, path){ /* Warning Internet Explorer doesn't use this it uses the one from pad_utils.js */
   if (days)
   {
     var date = new Date();
     date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
     var expires = "; expires=" + date.toGMTString();
   }
-  else var expires = "";
+  else{
+    var expires = "";
+  }
   
-  if(!path)
+  if(!path){ // If the path isn't set then just whack the cookie on the root path
     path = "/";
+  }
   
-  document.cookie = name + "=" + value + expires + "; path=" + path;
+  //Check if the browser is IE and if so make sure the full path is set in the cookie
+  if(navigator.appName=='Microsoft Internet Explorer'){
+    document.cookie = name + "=" + value + expires + "; path="+document.location;
+  }
+  else{
+    document.cookie = name + "=" + value + expires + "; path=" + path;
+  }
 }
 
 function readCookie(name)
@@ -98,11 +107,13 @@ function getParams()
   var showControls = params["showControls"];
   var showChat = params["showChat"];
   var userName = params["userName"];
+  var userColor = params["userColor"];
   var showLineNumbers = params["showLineNumbers"];
   var useMonospaceFont = params["useMonospaceFont"];
   var IsnoColors = params["noColors"];
   var rtl = params["rtl"];
   var alwaysShowChat = params["alwaysShowChat"];
+  var lang = params["lang"];
 
   if(IsnoColors)
   {
@@ -146,6 +157,11 @@ function getParams()
     // If the username is set as a parameter we should set a global value that we can call once we have initiated the pad.
     settings.globalUserName = decodeURIComponent(userName);
   }
+  if(userColor)
+    // If the userColor is set as a parameter, set a global value to use once we have initiated the pad.
+  {
+    settings.globalUserColor = decodeURIComponent(userColor);
+  }
   if(rtl)
   {
     if(rtl == "true")
@@ -158,6 +174,13 @@ function getParams()
     if(alwaysShowChat == "true")
     {
       chat.stickToScreen();
+    }
+  }
+  if(lang)
+  {
+    if(lang !== "")
+    {
+      window.html10n.localize([lang, 'en']);
     }
   }
 }
@@ -181,6 +204,7 @@ function savePassword()
   createCookie("password",$("#passwordinput").val(),null,document.location.pathname);
   //reload
   document.location=document.location;
+  return false;
 }
 
 function handshake()
@@ -277,21 +301,25 @@ function handshake()
     //the access was not granted, give the user a message
     if(!receivedClientVars && obj.accessStatus)
     {
+      $('.passForm').submit(require(module.id).savePassword);
+
       if(obj.accessStatus == "deny")
       {
-        $("#editorloadingbox").html("<b>You do not have permission to access this pad</b>");
+        $('#loading').hide();
+        $("#permissionDenied").show();
       }
       else if(obj.accessStatus == "needPassword")
       {
-        $("#editorloadingbox").html("<b>You need a password to access this pad</b><br>" +
-                                    "<input id='passwordinput' type='password' name='password'>"+
-                                    "<button type='button' onclick=\"" + padutils.escapeHtml('require('+JSON.stringify(module.id)+").savePassword()") + "\">ok</button>");
+        $('#loading').hide();
+        $('#passwordRequired').show();
+        $("#passwordinput").focus();
       }
       else if(obj.accessStatus == "wrongPassword")
       {
-        $("#editorloadingbox").html("<b>You're password was wrong</b><br>" +
-                                    "<input id='passwordinput' type='password' name='password'>"+
-                                    "<button type='button' onclick=\"" + padutils.escapeHtml('require('+JSON.stringify(module.id)+").savePassword()") + "\">ok</button>");
+        $('#loading').hide();
+        $('#wrongPassword').show();
+        $('#passwordRequired').show();
+        $("#passwordinput").focus();
       }
     }
     
@@ -347,6 +375,14 @@ function handshake()
         pad.myUserInfo.name = settings.globalUserName;
         $('#myusernameedit').attr({"value":settings.globalUserName}); // Updates the current users UI
       }
+      if (settings.globalUserColor !== false && colorutils.isCssHex(settings.globalUserColor))
+      {
+
+        // Add a 'globalUserColor' property to myUserInfo, so collabClient knows we have a query parameter.
+        pad.myUserInfo.globalUserColor = settings.globalUserColor;
+        pad.notifyChangeColor(settings.globalUserColor); // Updates pad.myUserInfo.colorId
+        paduserlist.setMyUserInfo(pad.myUserInfo);
+      }
     }
     //This handles every Message after the clientVars
     else
@@ -368,6 +404,10 @@ function handshake()
   });
   // Bind the colorpicker
   var fb = $('#colorpicker').farbtastic({ callback: '#mycolorpickerpreview', width: 220});
+  // Bind the read only button  
+  $('#readonlyinput').on('click',function(){
+    padeditbar.setEmbedLinks();
+  });
 }
 
 var pad = {
@@ -426,6 +466,7 @@ var pad = {
   {
     pad.collabClient.sendClientMessage(msg);
   },
+  createCookie: createCookie,
 
   init: function()
   {
@@ -782,8 +823,6 @@ var pad = {
       }, 1000);
     }
 
-    padsavedrevs.handleIsFullyConnected(isConnected);
-
     // pad.determineSidebarVisibility(isConnected && !isInitialConnect);
     pad.determineChatVisibility(isConnected && !isInitialConnect);
     pad.determineAuthorshipColorsVisibility();
@@ -1011,6 +1050,7 @@ var settings = {
 , noColors: false
 , useMonospaceFontGlobal: false
 , globalUserName: false
+, globalUserColor: false
 , rtlIsTrue: false
 };
 

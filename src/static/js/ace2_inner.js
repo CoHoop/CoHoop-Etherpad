@@ -19,11 +19,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-var editor, _, $, jQuery, plugins, Ace2Common;
+var _, $, jQuery, plugins, Ace2Common;
 
 Ace2Common = require('./ace2_common');
 
-plugins = require('ep_etherpad-lite/static/js/pluginfw/plugins');
+plugins = require('ep_etherpad-lite/static/js/pluginfw/client_plugins');
 $ = jQuery = require('./rjquery').$;
 _ = require("./underscore");
 
@@ -166,10 +166,12 @@ function Ace2Inner(){
   }
 
   var dynamicCSS = null;
+  var parentDynamicCSS = null;
 
   function initDynamicCSS()
   {
     dynamicCSS = makeCSSManager("dynamicsyntax");
+    parentDynamicCSS = makeCSSManager("dynamicsyntax", true);
   }
 
   var changesetTracker = makeChangesetTracker(scheduler, rep.apool, {
@@ -200,6 +202,11 @@ function Ace2Inner(){
 
   var authorInfos = {}; // presence of key determines if author is present in doc
 
+  function getAuthorInfos(){
+    return authorInfos;
+  };
+  editorInfo.ace_getAuthorInfos= getAuthorInfos;
+
   function setAuthorInfo(author, info)
   {
     if ((typeof author) != "string")
@@ -212,6 +219,7 @@ function Ace2Inner(){
       if (dynamicCSS)
       {
         dynamicCSS.removeSelectorStyle(getAuthorColorClassSelector(getAuthorClassName(author)));
+        parentDynamicCSS.removeSelectorStyle(getAuthorColorClassSelector(getAuthorClassName(author)));
       }
     }
     else
@@ -229,18 +237,23 @@ function Ace2Inner(){
           
           var authorStyle = dynamicCSS.selectorStyle(getAuthorColorClassSelector(
           getAuthorClassName(author)));
+          var parentAuthorStyle = parentDynamicCSS.selectorStyle(getAuthorColorClassSelector(
+          getAuthorClassName(author)));
           var anchorStyle = dynamicCSS.selectorStyle(getAuthorColorClassSelector(
           getAuthorClassName(author))+' > a')
           
           // author color
           authorStyle.backgroundColor = bgcolor;
+          parentAuthorStyle.backgroundColor = bgcolor;
           
           // text contrast
           if(colorutils.luminosity(colorutils.css2triple(bgcolor)) < 0.5)
           {
             authorStyle.color = '#ffffff';
+            parentAuthorStyle.color = '#ffffff';
           }else{
             authorStyle.color = null;
+            parentAuthorStyle.color = null;
           }
           
           // anchor text contrast
@@ -326,14 +339,6 @@ function Ace2Inner(){
     var color = colorutils.css2triple(colorCSS);
     color = colorutils.blend(color, [1, 1, 1], fadeFrac);
     return colorutils.triple2css(color);
-  }
-
-  function doAlert(str)
-  {
-    scheduler.setTimeout(function()
-    {
-      alert(str);
-    }, 0);
   }
 
   editorInfo.ace_getRep = function()
@@ -884,7 +889,14 @@ function Ace2Inner(){
   editorInfo.ace_setEditable = setEditable;
   editorInfo.ace_execCommand = execCommand;
   editorInfo.ace_replaceRange = replaceRange;
-
+  editorInfo.ace_getAuthorInfos= getAuthorInfos;
+  editorInfo.ace_performDocumentReplaceRange = performDocumentReplaceRange;
+  editorInfo.ace_performDocumentReplaceCharRange = performDocumentReplaceCharRange;
+  editorInfo.ace_renumberList = renumberList;
+  editorInfo.ace_doReturnKey = doReturnKey;
+  editorInfo.ace_isBlockElement = isBlockElement;
+  editorInfo.ace_getLineListType = getLineListType;
+  
   editorInfo.ace_callWithAce = function(fn, callStack, normalize)
   {
     var wrapper = function()
@@ -1486,7 +1498,6 @@ function Ace2Inner(){
 
     if (currentCallStack.domClean) return false;
 
-    inInternationalComposition = false; // if we need the document normalized, so be it
     currentCallStack.isUserChange = true;
 
     isTimeUp = (isTimeUp ||
@@ -1613,7 +1624,7 @@ function Ace2Inner(){
 
         if (linesWrapped > 0)
         {
-          doAlert("Editor warning: " + linesWrapped + " long line" + (linesWrapped == 1 ? " was" : "s were") + " hard-wrapped into " + ccData.numLinesAfter + " lines.");
+          // console.log("Editor warning: " + linesWrapped + " long line" + (linesWrapped == 1 ? " was" : "s were") + " hard-wrapped into " + ccData.numLinesAfter + " lines.");
         }
 
         if (ss[0] >= 0) selStart = [ss[0] + a + netNumLinesChangeSoFar, ss[1]];
@@ -1686,11 +1697,27 @@ function Ace2Inner(){
     if (selection && !selStart)
     {
       //if (domChanges) dmesg("selection not collected");
-      selStart = getLineAndCharForPoint(selection.startPoint);
+      var selStartFromHook = hooks.callAll('aceStartLineAndCharForPoint', {
+        callstack: currentCallStack,
+        editorInfo: editorInfo,
+        rep: rep,
+        root:root,
+        point:selection.startPoint,
+        documentAttributeManager: documentAttributeManager
+      });	
+      selStart = (selStartFromHook==null||selStartFromHook.length==0)?getLineAndCharForPoint(selection.startPoint):selStartFromHook;
     }
     if (selection && !selEnd)
     {
-      selEnd = getLineAndCharForPoint(selection.endPoint);
+      var selEndFromHook = hooks.callAll('aceEndLineAndCharForPoint', {
+        callstack: currentCallStack,
+        editorInfo: editorInfo,
+        rep: rep,
+        root:root,
+        point:selection.endPoint,
+        documentAttributeManager: documentAttributeManager
+      });
+      selEnd = (selEndFromHook==null||selEndFromHook.length==0)?getLineAndCharForPoint(selection.endPoint):selEndFromHook;		                      
     }
 
     // selection from content collection can, in various ways, extend past final
@@ -1845,17 +1872,20 @@ function Ace2Inner(){
   {
     return rep.selStart[0];
   }
-
+  editorInfo.ace_caretLine = caretLine;
+  
   function caretColumn()
   {
     return rep.selStart[1];
   }
-
+  editorInfo.ace_caretColumn = caretColumn;
+  
   function caretDocChar()
   {
     return rep.lines.offsetOfIndex(caretLine()) + caretColumn();
   }
-
+  editorInfo.ace_caretDocChar = caretDocChar;
+  
   function handleReturnIndentation()
   {
     // on return, indent to level of previous line
@@ -3236,8 +3266,8 @@ function Ace2Inner(){
       }
     }
     //hide the dropdownso
-    if(window.parent.parent.padeditbar){ // required in case its in an iframe should probably use parent..  See Issue 327 https://github.com/Pita/etherpad-lite/issues/327
-      window.parent.parent.padeditbar.toogleDropDown("none");
+    if(window.parent.parent.padeditbar){ // required in case its in an iframe should probably use parent..  See Issue 327 https://github.com/ether/etherpad-lite/issues/327
+      window.parent.parent.padeditbar.toggleDropDown("none");
     }
   }
 
@@ -3447,7 +3477,8 @@ function Ace2Inner(){
   {
     return !!REGEX_WORDCHAR.exec(c);
   }
-
+  editorInfo.ace_isWordChar = isWordChar;
+  
   function isSpaceChar(c)
   {
     return !!REGEX_SPACE.exec(c);
@@ -3514,6 +3545,13 @@ function Ace2Inner(){
     var keyCode = evt.keyCode;
     var which = evt.which;
 
+    // prevent ESC key
+    if (keyCode == 27)
+    {
+      evt.preventDefault();
+      return;
+    }
+
     //dmesg("keyevent type: "+type+", which: "+which);
     // Don't take action based on modifier keys going up and down.
     // Modifier keys do not generate "keypress" events.
@@ -3531,7 +3569,6 @@ function Ace2Inner(){
 
     inCallStackIfNecessary("handleKeyEvent", function()
     {
-
       if (type == "keypress" || (isTypeForSpecialKey && keyCode == 13 /*return*/ ))
       {
         // in IE, special keys don't send keypress, the keydown does the action
@@ -3545,10 +3582,17 @@ function Ace2Inner(){
       {
         outsideKeyDown(evt);
       }
-
       if (!stopped)
       {
-        if (isTypeForSpecialKey && keyCode == 8)
+        var specialHandledInHook = hooks.callAll('aceKeyEvent', {
+          callstack: currentCallStack,
+          editorInfo: editorInfo,
+          rep: rep,
+          documentAttributeManager: documentAttributeManager,
+          evt:evt
+        });
+        specialHandled = (specialHandledInHook&&specialHandledInHook.length>0)?specialHandledInHook[0]:specialHandled;
+        if ((!specialHandled) && isTypeForSpecialKey && keyCode == 8)
         {
           // "delete" key; in mozilla, if we're at the beginning of a line, normalize now,
           // or else deleting a blank line can take two delete presses.
@@ -3574,6 +3618,12 @@ function Ace2Inner(){
           {
             outerWin.scrollBy(-100, 0);
           }, 0);
+          specialHandled = true;
+        }
+        if ((!specialHandled) && isTypeForCmdKey && String.fromCharCode(which).toLowerCase() == "s" && (evt.metaKey || evt.ctrlKey)) /* Do a saved revision on ctrl S */
+        {
+          evt.preventDefault();
+          parent.parent.pad.collabClient.sendMessage({"type":"SAVE_REVISION"}); /* The parent.parent part of this is BAD and I feel bad..  It may break something */
           specialHandled = true;
         }
         if ((!specialHandled) && isTypeForSpecialKey && keyCode == 9 && !(evt.metaKey || evt.ctrlKey))
@@ -4543,8 +4593,8 @@ function Ace2Inner(){
     }
   }
 
-  var inInternationalComposition = false;
 
+  var inInternationalComposition = false;
   function handleCompositionEvent(evt)
   {
     // international input events, fired in FF3, at least;  allow e.g. Japanese input
@@ -4556,6 +4606,11 @@ function Ace2Inner(){
     {
       inInternationalComposition = false;
     }
+  }
+
+  editorInfo.ace_getInInternationalComposition = function ()
+  {
+    return inInternationalComposition;
   }
 
   function bindTheEventHandlers()
@@ -4570,7 +4625,8 @@ function Ace2Inner(){
       $(document).on("click", handleIEOuterClick);
     }
     if (browser.msie) $(root).on("paste", handleIEPaste);
-    if ((!browser.msie) && document.documentElement)
+    // CompositionEvent is not implemented below IE version 8
+    if ( !(browser.msie && browser.version < 9) && document.documentElement)
     {
       $(document.documentElement).on("compositionstart", handleCompositionEvent);
       $(document.documentElement).on("compositionend", handleCompositionEvent);
@@ -5393,62 +5449,64 @@ function Ace2Inner(){
     return documentAttributeManager.setAttributesOnRange.apply(documentAttributeManager, arguments);
   };
 
-  $(document).ready(function(){
-    doc = document; // defined as a var in scope outside
-    inCallStack("setup", function()
-    {
-      var body = doc.getElementById("innerdocbody");
-      root = body; // defined as a var in scope outside
-      if (browser.mozilla) $(root).addClass("mozilla");
-      if (browser.safari) $(root).addClass("safari");
-      if (browser.msie) $(root).addClass("msie");
-      if (browser.msie)
+  this.init = function () {
+    $(document).ready(function(){
+      doc = document; // defined as a var in scope outside
+      inCallStack("setup", function()
       {
-        // cache CSS background images
-        try
+        var body = doc.getElementById("innerdocbody");
+        root = body; // defined as a var in scope outside
+        if (browser.mozilla) $(root).addClass("mozilla");
+        if (browser.safari) $(root).addClass("safari");
+        if (browser.msie) $(root).addClass("msie");
+        if (browser.msie)
         {
-          doc.execCommand("BackgroundImageCache", false, true);
+          // cache CSS background images
+          try
+          {
+            doc.execCommand("BackgroundImageCache", false, true);
+          }
+          catch (e)
+          { /* throws an error in some IE 6 but not others! */
+          }
         }
-        catch (e)
-        { /* throws an error in some IE 6 but not others! */
-        }
-      }
-      setClassPresence(root, "authorColors", true);
-      setClassPresence(root, "doesWrap", doesWrap);
+        setClassPresence(root, "authorColors", true);
+        setClassPresence(root, "doesWrap", doesWrap);
 
-      initDynamicCSS();
+        initDynamicCSS();
 
-      enforceEditability();
+        enforceEditability();
 
-      // set up dom and rep
-      while (root.firstChild) root.removeChild(root.firstChild);
-      var oneEntry = createDomLineEntry("");
-      doRepLineSplice(0, rep.lines.length(), [oneEntry]);
-      insertDomLines(null, [oneEntry.domInfo], null);
-      rep.alines = Changeset.splitAttributionLines(
-      Changeset.makeAttribution("\n"), "\n");
+        // set up dom and rep
+        while (root.firstChild) root.removeChild(root.firstChild);
+        var oneEntry = createDomLineEntry("");
+        doRepLineSplice(0, rep.lines.length(), [oneEntry]);
+        insertDomLines(null, [oneEntry.domInfo], null);
+        rep.alines = Changeset.splitAttributionLines(
+        Changeset.makeAttribution("\n"), "\n");
 
-      bindTheEventHandlers();
+        bindTheEventHandlers();
 
-    });
+      });
     
-    hooks.callAll('aceInitialized', {
-      editorInfo: editorInfo,
-      rep: rep,
-      documentAttributeManager: documentAttributeManager
-    });
+      hooks.callAll('aceInitialized', {
+        editorInfo: editorInfo,
+        rep: rep,
+        documentAttributeManager: documentAttributeManager
+      });
     
-    scheduler.setTimeout(function()
-    {
-      parent.readyFunc(); // defined in code that sets up the inner iframe
-    }, 0);
+      scheduler.setTimeout(function()
+      {
+        parent.readyFunc(); // defined in code that sets up the inner iframe
+      }, 0);
 
-    isSetUp = true;
-  });
+      isSetUp = true;
+    });
+  }
 
 }
 
-// Ensure that plugins are loaded before initializing the editor
-plugins.ensure(function () {
-  var editor = new Ace2Inner();
-});
+exports.init = function () {
+  var editor = new Ace2Inner()
+  editor.init();
+};
