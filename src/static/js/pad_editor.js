@@ -75,6 +75,15 @@ var padeditor = (function()
       {
         pad.changeViewOption('useMonospaceFont', $("#viewfontmenu").val() == 'monospace');
       });
+      
+      html10n.bind('localized', function() {
+        $("#languagemenu").val(html10n.getLanguage());
+      })
+      $("#languagemenu").val(html10n.getLanguage());
+      $("#languagemenu").change(function() {
+        pad.createCookie("language",$("#languagemenu").val(),null,'/');
+        window.html10n.localize([$("#languagemenu").val(), 'en']);
+      });
     },
     setViewOptions: function(newOptions)
     {
@@ -85,10 +94,12 @@ var padeditor = (function()
         if (value == "false") return false;
         return defaultValue;
       }
-
       self.ace.setProperty("rtlIsTrue", settings.rtlIsTrue);
 
       var v;
+
+      v = getOption('rtlIsTrue', false);
+      self.ace.setProperty("rtlIsTrue", v);
 
       v = getOption('showLineNumbers', true);
       self.ace.setProperty("showslinenumbers", v);

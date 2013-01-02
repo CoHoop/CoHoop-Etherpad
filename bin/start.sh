@@ -39,6 +39,7 @@ echo "Install mongodb dependence"
 
 #Move to the node folder and start
 echo "start..."
+
 # Invoke the Forever module (to START our Node.js server).
 ./node_modules/forever/bin/forever \
 start \
