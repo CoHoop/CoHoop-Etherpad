@@ -1,0 +1,35 @@
+{
+  "description": "Adds heading support to Etherpad Lite.",
+  "name": "ep_headings",
+  "version": "0.1.2",
+  "author": {
+    "name": "fourplusone",
+    "email": "info@fourplusone.de"
+  },
+  "contributors": [
+    {
+      "name": "Matthias Bartelmeß",
+      "email": "mba@fourplusone.de"
+    },
+    {
+      "name": "Nicolas Lescop",
+      "email": "limplementeur@gmail.com"
+    }
+  ],
+  "dependencies": {},
+  "engines": {
+    "node": "*"
+  },
+  "homepage": "https://github.com/fourplusone/etherpad-plugins",
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/fourplusone/etherpad-plugins.git"
+  },
+  "_id": "ep_headings@0.1.2",
+  "dist": {
+    "shasum": "0f3c7f0dc307ca1c352f63c090a3e1bdc257fb66"
+  },
+  "_from": "etherpad-plugins/ep_headings/",
+  "readme": "ERROR: No README.md file found!"
+}

@@ -1,0 +1,31 @@
+{
+  "description": "Adds format text button.",
+  "name": "ep_format-bar",
+  "version": "0.0.1",
+  "author": {
+    "name": "Nicolas Lescop",
+    "email": "limplementeur@gmail.com"
+  },
+  "contributors": [
+    {
+      "name": "Nicolas Lescop",
+      "email": "limplementeur@gmail.com"
+    }
+  ],
+  "dependencies": {},
+  "engines": {
+    "node": "*"
+  },
+  "homepage": "https://github.com/nicolas-lescop/etherpad-plugins",
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/nicolas-lescop/etherpad-plugins.git"
+  },
+  "_id": "ep_format-bar@0.0.1",
+  "_from": "etherpad-plugins/ep_format-bar/",
+  "readme": "ERROR: No README.md file found!",
+  "dist": {
+    "shasum": "12b23ad2dbe1205597f6cf2d2889a6b463a7cfed"
+  }
+}
