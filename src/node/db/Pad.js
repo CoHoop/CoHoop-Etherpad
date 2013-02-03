@@ -213,6 +213,48 @@ Pad.prototype.getInternalRevisionAText = function getInternalRevisionAText(targe
   });
 };
 
+Pad.prototype.getRevision = function getRevisionChangeset(revNum, callback) {
+  db.get("pad:"+this.id+":revs:"+revNum, callback);
+};
+
+Pad.prototype.getAllAuthorColors = function getAllAuthorColors(callback){
+  var authors = this.getAllAuthors();
+  var returnTable = {};
+  var colorPalette = authorManager.getColorPalette();
+
+  async.forEach(authors, function(author, callback){
+    authorManager.getAuthorColorId(author, function(err, colorId){
+      if(err){
+        return callback(err);
+      }
+      //colorId might be a hex color or an number out of the palette
+      returnTable[author]=colorPalette[colorId] || colorId;
+
+      callback();
+    });
+  }, function(err){
+    callback(err, returnTable);
+  });
+};
+
+Pad.prototype.getValidRevisionRange = function getValidRevisionRange(startRev, endRev) {
+  startRev = parseInt(startRev, 10);
+  var head = this.getHeadRevisionNumber();
+  endRev = endRev ? parseInt(endRev, 10) : head;
+  if(isNaN(startRev) || startRev < 0 || startRev > head) {
+    startRev = null;
+  }
+  if(isNaN(endRev) || endRev < startRev) {
+    endRev = null;
+  } else if(endRev > head) {
+    endRev = head;
+  }
+  if(startRev !== null && endRev !== null) {
+    return { startRev: startRev , endRev: endRev }
+  }
+  return null;
+};
+
 Pad.prototype.getKeyRevisionNumber = function getKeyRevisionNumber(revNum) {
   return Math.floor(revNum / 100) * 100;
 };
@@ -281,27 +323,7 @@ Pad.prototype.getChatMessage = function getChatMessage(entryNum, callback) {
   });
 };
 
-Pad.prototype.getLastChatMessages = function getLastChatMessages(count, callback) {
-  //return an empty array if there are no chat messages
-  if(this.chatHead == -1)
-  {
-    callback(null, []);
-    return;
-  }
-
-  var _this = this;
-
-  //works only if we decrement the amount, for some reason
-  count--;
-
-  //set the startpoint
-  var start = this.chatHead-count;
-  if(start < 0)
-    start = 0;
-
-  //set the endpoint
-  var end = this.chatHead;
-
+Pad.prototype.getChatMessages = function getChatMessages(start, end, callback) {
   //collect the numbers of chat entries and in which order we need them
   var neededEntries = [];
   var order = 0;
@@ -310,7 +332,9 @@ Pad.prototype.getLastChatMessages = function getLastChatMessages(count, callback
     neededEntries.push({entryNum:i, order: order});
     order++;
   }
-
+  
+  var _this = this;
+  
   //get all entries out of the database
   var entries = [];
   async.forEach(neededEntries, function(entryObject, callback)
@@ -473,8 +497,7 @@ Pad.prototype.remove = function remove(callback) {
     //delete the pad entry and delete pad from padManager
     function(callback)
     {
-      db.remove("pad:"+padID);
-      padManager.unloadPad(padID);
+      padManager.removePad(padID);
       hooks.callAll("padRemove", {'padID':padID});
       callback();
     }

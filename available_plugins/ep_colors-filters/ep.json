@@ -1,0 +1,15 @@
+{
+  "parts": [
+    {
+      "name": "main",
+      "client_hooks": {
+        "postAceInit": "ep_colors-filters/static/js/index",
+        "aceInitInnerdocbodyHead": "ep_colors-filters/static/js/index"
+      },
+      "hooks": {
+        "eejsBlock_editbarMenuLeft": "ep_colors-filters/index",
+        "eejsBlock_styles": "ep_colors-filters/index"
+      }
+    }
+  ]
+}
